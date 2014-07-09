@@ -1,18 +1,6 @@
 # Utilisateurs
 
 * /users/:id + PUT -> Mettre à jour un utilisateur
-* /users/:id/likes -> liste des films qu'on aime
-* /users/:id/likes/:movie_id + post -> aimer un film
-* /users/:id/likes/:movie_id + delete -> ne plus aimer un film
-* /users/:id/dislikes -> liste des films qu'on aime pas
-* /users/:id/dislikes/:movie_id + post -> ne pas aimer un film
-* /users/:id/dislikes/:movie_id + delete -> supprimer avis negatif du film
-* /users/:id/watched -> liste des films qu'on a vu
-* /users/:id/watched/:movie_id + post -> ajouter un film vu
-* /users/:id/watched/:movie_id + delete -> supprimer un film vu
-* /users/:id/watchlist -> liste des films qu'on a pas vu
-* /users/:id/watchlist/:movie_id + post -> ajouter un film a voir
-* /users/:id/watchlist/:movie_id + delete -> supprimer un film a voir
 
 ---
 
@@ -38,7 +26,18 @@ FAIT :
 * /users + POST -> créer un utilisateur == OK
 * /users/:id -> voir le profil d'un utilisateur == OK
 * /users/:id + DELETE -> Supprimer un utilisateur == OK
-
+* /users/:id/likes/:movie_id + post -> aimer un film == OK
+* /users/:id/likes/:movie_id + delete -> ne plus aimer un film == OK
+* /users/:id/likes -> liste des films qu'on aime == OK
+* /users/:id/dislikes -> liste des films qu'on aime pas == OK
+* /users/:id/dislikes/:movie_id + post -> ne pas aimer un film == OK
+* /users/:id/dislikes/:movie_id + delete -> supprimer avis negatif du film == OK
+* /users/:id/watched -> liste des films qu'on a vu == OK
+* /users/:id/watched/:movie_id + post -> ajouter un film vu == OK
+* /users/:id/watched/:movie_id + delete -> supprimer un film vu == OK
+* /users/:id/watchlist -> liste des films qu'on a pas vu == OK
+* /users/:id/watchlist/:movie_id + post -> ajouter un film a voir == OK
+* /users/:id/watchlist/:movie_id + delete -> supprimer un film a voir == OK
 ---
 
 # movies
