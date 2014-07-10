@@ -58,3 +58,9 @@ function delete_movie_by_id($idMovie) {
 
     return $query->execute();
 }
+
+// Liste des genre de vidéos
+function get_movies_genres() {
+    $query = MySQL::getInstance()->query( "SELECT * FROM genres" );
+    return $query->fetchAll( PDO::FETCH_ASSOC );
+}

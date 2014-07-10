@@ -7,16 +7,12 @@ class MovieHandler {
     function get($idMovie) {
         $movie = get_movie_by_id($idMovie);
 
-        JSON::header(200);
-        JSON::result( $movie );
-    }
-
-    // Création d'une vidéo
-    function post() {
-        $movie = post_create_movie_by_id('', trim($_POST['title']), trim($_POST['cover']), trim($_POST['genre']) );
-
-        JSON::header(200);
-        JSON::result( $movie );
+        if( is_array($movie) && !empty($movie) ){
+            JSON::header(200);
+            JSON::result( $movie );
+        } else{
+            JSON::error(204, "No content - Cette video n'existe pas.");
+        }
     }
 
     // Mise à jour d'une vidéo [idMovie]
@@ -28,8 +24,12 @@ class MovieHandler {
 
         $movie = get_movie_by_id($idMovie);
 
-        JSON::header(200);
-        JSON::result( $movie );
+        if( is_array($movie) && !empty($movie) ){
+            JSON::header(200);
+            JSON::result( $movie );
+        } else{
+            JSON::error(204, "No content - Cette video n'existe pas.");
+        }
     }
 
     // Suppression d'une vidéo [idMovie]

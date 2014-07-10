@@ -17,4 +17,11 @@ class JSON{
 		}' ;
 		echo $json;
 	}
+
+	// On affiche une erreur en JSON
+	static function error($code, $error){
+        $json = json_encode( array('meta' => array( 'code' => $code, 'error' => $error )));
+
+        echo $json;
+    }
 }

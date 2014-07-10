@@ -7,7 +7,11 @@ class UsersHandler {
     function get() {
         $users = get_users();
 
-        JSON::header(200);
-        JSON::result( $users );
+        if( is_array($users) && !empty($users) ){
+            JSON::header(200);
+            JSON::result( $users );
+        } else{
+            JSON::error(204, "No content - Il n'existe aucun utilisateur.");
+        }
     }
 }

@@ -14,8 +14,7 @@ function get_movies_likes($idUser) {
     return $query->fetch(PDO::FETCH_ASSOC);
 }
 
-// Aimer || Supprimer "Aimer" un film
-function post_likes_movies($idUser, $idMovie) {
+function liaison_user_movie($idUser, $idMovie){
     // Vérifie si une liaison existe en l'utilisateur et la vidéo
     $requete = MySQL::getInstance()->prepare("SELECT * from users_movies_liaison WHERE user_id=:idUser and movie_id=:idMovie");
     $requete->bindValue(':idUser', $idUser, PDO::PARAM_INT);
@@ -24,23 +23,34 @@ function post_likes_movies($idUser, $idMovie) {
 
     $result = $requete->fetch(PDO::FETCH_ASSOC);
 
+    return $result;
+}
+
+// Aimer un film
+function post_likes_movies($idUser, $idMovie) {
+    $liaison = liaison_user_movie($idUser, $idMovie);
+
     // Si une liaison existe
-    if( !empty($result) ) { 
-        // Si il n'y a pas de vu on la passe à 1
-        if ($result['likes'] == NULL ) {
-            $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET likes = 1, dislikes = NULL WHERE user_id=:idUser and movie_id=:idMovie");
-        } // Sinon on la passe à NULL
-        else{
-            $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET likes = NULL WHERE user_id=:idUser and movie_id=:idMovie");
-        }
-        
-        $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
-        $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
-        return $query->execute();
-        
-    } // Sinon une créer une liaison avec tout ce qu'il faut ^^ 
+    if( $liaison != false ) { 
+        $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET likes = 1, dislikes = NULL WHERE user_id=:idUser and movie_id=:idMovie");
+    } 
+    // Sinon une créer une liaison avec tout ce qu'il faut ^^ 
     else{
         $query = MySQL::getInstance()->prepare("INSERT INTO users_movies_liaison (user_id, movie_id, likes) VALUES (:idUser, :idMovie, 1)");
+    }
+
+    $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
+    $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
+    return $query->execute();
+}
+
+// Supprimer "Aimer" un film
+function delete_likes_movies($idUser, $idMovie) {
+    $liaison = liaison_user_movie($idUser, $idMovie);
+
+    // Si une liaison existe
+    if( $liaison != false ) { 
+        $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET likes = NULL WHERE user_id=:idUser and movie_id=:idMovie"); 
         $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
         $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
         return $query->execute();
@@ -62,37 +72,35 @@ function get_movies_dislikes($idUser) {
     return $query->fetch(PDO::FETCH_ASSOC);
 }
 
-// Ne pas aimer / Supprimer "Ne pas aimer"
+// Ne pas aimer un film
 function post_dislikes_movies($idUser, $idMovie) {
-    // Vérifie si une liaison existe en l'utilisateur et la vidéo
-    $requete = MySQL::getInstance()->prepare("SELECT * from users_movies_liaison WHERE user_id=:idUser and movie_id=:idMovie");
-    $requete->bindValue(':idUser', $idUser, PDO::PARAM_INT);
-    $requete->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
-    $requete->execute();
-
-    $result = $requete->fetch(PDO::FETCH_ASSOC);
+    $liaison = liaison_user_movie($idUser, $idMovie);
 
     // Si une liaison existe
-    if( !empty($result) ) { 
-        // Si il n'y a pas de vu on la passe à 1
-        if ($result['dislikes'] == NULL ) {
-            $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET dislikes = 1, likes = NULL WHERE user_id=:idUser and movie_id=:idMovie");
-        } // Sinon on la passe à NULL
-        else{
-            $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET dislikes = NULL WHERE user_id=:idUser and movie_id=:idMovie");
-        }
-        
-        $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
-        $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
-        return $query->execute();
-
+    if( $liaison != false ) {
+        $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET dislikes = 1, likes = NULL WHERE user_id=:idUser and movie_id=:idMovie");
     } // Sinon une créer une liaison avec tout ce qu'il faut ^^ 
     else{
         $query = MySQL::getInstance()->prepare("INSERT INTO users_movies_liaison (user_id, movie_id, dislikes) VALUES (:idUser, :idMovie, 1)");
+    }
+
+    $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
+    $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
+    return $query->execute();
+}
+
+// Supprimer "Ne pas aimer" un film
+function delete_dislikes_movies($idUser, $idMovie) {
+    $liaison = liaison_user_movie($idUser, $idMovie);
+
+    // Si une liaison existe
+    if( $liaison != false ) {
+        $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET dislikes = NULL WHERE user_id=:idUser and movie_id=:idMovie");
         $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
         $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
+
         return $query->execute();
-    }
+    } 
 }
 
 /*---- USERS / MOVIES : Watched ----*/
@@ -110,36 +118,37 @@ function get_movies_watched($idUser) {
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// A vu || Supprimer "A vu" un film
+// A vu un film
 function post_watched_movies($idUser, $idMovie) {
-    // Vérifie si une liaison existe en l'utilisateur et la vidéo
-    $requete = MySQL::getInstance()->prepare("SELECT * from users_movies_liaison WHERE user_id=:idUser and movie_id=:idMovie");
-    $requete->bindValue(':idUser', $idUser, PDO::PARAM_INT);
-    $requete->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
-    $requete->execute();
-
-    $result = $requete->fetch(PDO::FETCH_ASSOC);
+    $liaison = liaison_user_movie($idUser, $idMovie);
 
     // Si une liaison existe
-    if( !empty($result) ) { 
-        // Si il n'y a pas de vu on la passe à 1
-        if ($result['watched'] == NULL ) {
-            $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET watched = 1, watchlist = NULL WHERE user_id=:idUser and movie_id=:idMovie");
-        } // Sinon on la passe à NULL
-        else{
-            $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET watched = NULL WHERE user_id=:idUser and movie_id=:idMovie");
-        }
-        
-        $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
-        $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
-        return $query->execute();
+    if( $liaison != false ) {
+        $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET watched = 1, watchlist = NULL WHERE user_id=:idUser and movie_id=:idMovie");
     } // Sinon une créer une liaison avec tout ce qu'il faut ^^ 
     else{
         $query = MySQL::getInstance()->prepare("INSERT INTO users_movies_liaison (user_id, movie_id, watched) VALUES (:idUser, :idMovie, 1)");
-        $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
-        $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
-        return $query->execute();
     }
+    $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
+    $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
+    return $query->execute();
+}
+
+// Supprimer "A vu" un film
+function delete_watched_movies($idUser, $idMovie) {
+    $liaison = liaison_user_movie($idUser, $idMovie);
+
+    // Si une liaison existe
+    if( $liaison != false ) {
+        $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET watched = NULL WHERE user_id=:idUser and movie_id=:idMovie");
+    } // Sinon une créer une liaison avec tout ce qu'il faut ^^ 
+    else{
+        $query = MySQL::getInstance()->prepare("INSERT INTO users_movies_liaison (user_id, movie_id, watched) VALUES (:idUser, :idMovie, 1)");
+    }
+
+    $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
+    $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
+    return $query->execute();
 }
 
 /*---- USERS / MOVIES : Watchlist ----*/
@@ -157,34 +166,32 @@ function get_movies_watchlist($idUser) {
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// A voir || Supprimer "A voir"
+// A voir
 function post_watchlist_movies($idUser, $idMovie) {
-    // Vérifie si une liaison existe en l'utilisateur et la vidéo
-    $requete = MySQL::getInstance()->prepare("SELECT * from users_movies_liaison WHERE user_id=:idUser and movie_id=:idMovie");
-    $requete->bindValue(':idUser', $idUser, PDO::PARAM_INT);
-    $requete->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
-    $requete->execute();
-
-    $result = $requete->fetch(PDO::FETCH_ASSOC);
+    $liaison = liaison_user_movie($idUser, $idMovie);
 
     // Si une liaison existe
-    if( !empty($result) ) { 
-        // Si il n'y a pas de vu on la passe à 1
-        if ($result['watchlist'] == NULL ) {
-            $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET watchlist = 1, watched = NULL WHERE user_id=:idUser and movie_id=:idMovie");
-        } // Sinon on la passe à NULL
-        else{
-            $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET watchlist = NULL WHERE user_id=:idUser and movie_id=:idMovie");
-        }
-        
-        $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
-        $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
-        return $query->execute();
+    if( $liaison != false ) {
+        $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET watchlist = 1, watched = NULL WHERE user_id=:idUser and movie_id=:idMovie");
     } // Sinon une créer une liaison avec tout ce qu'il faut ^^ 
     else{
         $query = MySQL::getInstance()->prepare("INSERT INTO users_movies_liaison (user_id, movie_id, watchlist) VALUES (:idUser, :idMovie, 1)");
+    }
+
+    $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
+    $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
+    return $query->execute();
+}
+
+// Supprimer "A voir"
+function delete_watchlist_movies($idUser, $idMovie) {
+    $liaison = liaison_user_movie($idUser, $idMovie);
+
+    // Si une liaison existe
+    if( $liaison != false ) {
+        $query = MySQL::getInstance()->prepare("UPDATE users_movies_liaison SET watchlist = NULL WHERE user_id=:idUser and movie_id=:idMovie");
         $query->bindValue(':idUser', $idUser, PDO::PARAM_INT);
         $query->bindValue(':idMovie', $idMovie, PDO::PARAM_INT);
         return $query->execute();
-    }
+    } 
 }

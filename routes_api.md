@@ -1,18 +1,3 @@
-# movies
-
-* /movies/:id + PUT -> Mettre à jour un film
-
----
-
-# plus 
-
-* /search?q=:recherche&type=movies|users -> recherche
-* /users/:id/follow/:id + post -> suivre un utilisateur
-* /users/:id/follow/:id + delete -> ne plus suivre un utilisateur
-* /users/:id/follow -> les users suivis par l'utilisateur
-* /users/:id/followers -> les users qui nous suivent
-
-
 FAIT :
 # Utilisateurs
 
@@ -41,3 +26,12 @@ FAIT :
 * /movies + POST -> créer un film == OK
 * /movies/:id -> voir la fiche d'un film == OK
 * /movies/:id + DELETE -> Supprimer un film == OK
+* /movies/:id + PUT -> Mettre à jour un film == OK
+---
+
+# plus 
+* /search?q=:recherche&type=movies|users -> recherche == OK
+* /users/:id/follow/:id + post -> suivre un utilisateur == OK
+* /users/:id/follow/:id + delete -> ne plus suivre un utilisateur == OK
+* /users/:id/follow -> les users suivis par l'utilisateur == OK
+* /users/:id/followers -> les users qui nous suivent == OK

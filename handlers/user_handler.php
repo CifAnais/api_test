@@ -6,28 +6,50 @@ class UserHandler {
     function get($idUser) {
         $user = get_user_by_id($idUser);
 
-        JSON::header(200);
-        JSON::result( $user );
+        if( is_array($user) && !empty($user) ){
+            JSON::header(200);
+            JSON::result( $user );
+        } else{
+            JSON::error(204, "No content - Cet utilisateur n'existe pas.");
+        }
     }
 
     // Création d'un utilisateur [idUser]
     function post($idUser) {
-        post_create_user_by_id($idUser, trim($_POST['username']));
-        $user = get_user_by_id($idUser);
+        $userName = trim($_POST['username']);
 
-        JSON::header(200);
-        JSON::result( $user );
+        if( $userName != '' ){
+            post_create_user_by_id($idUser, $userName);
+            $user = get_user_by_id($idUser);
+
+            if( is_array($user) && !empty($user) ){
+                JSON::header(200);
+                JSON::result( $user );
+            } else{
+                JSON::error(400, "Bad Request - Il y a eu un probleme lors de l'enregistrement.");
+            }
+        } else{
+            JSON::error(400, "Bad Request - Tous les champs ne sont pas remplis.");
+        }
     }
 
     // Mise à jour d'un utilisateur [idUser]
     function put($idUser) {
     	$userName = $_REQUEST['username'];
-        put_update_user_by_id( $idUser, $userName );
 
-        $user = get_user_by_id($idUser);
+        if( $userName != '' ){
+            put_update_user_by_id( $idUser, $userName );
+            $user = get_user_by_id($idUser);
 
-        JSON::header(200);
-        JSON::result( $user );
+            if( is_array($user) && !empty($user) ){
+                JSON::header(200);
+                JSON::result( $user );
+            } else{
+                JSON::error(400, "Bad Request - Il y a eu un probleme lors de l'enregistrement.");
+            }
+        } else{
+            JSON::error(400, "Bad Request - Tous les champs ne sont pas remplis.");
+        }
     }
 
     // Suppression d'un utilisateur [idUser]
