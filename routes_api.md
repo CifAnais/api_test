@@ -1,9 +1,3 @@
-# Utilisateurs
-
-* /users/:id + PUT -> Mettre à jour un utilisateur
-
----
-
 # movies
 
 * /movies/:id + PUT -> Mettre à jour un film
@@ -38,6 +32,7 @@ FAIT :
 * /users/:id/watchlist -> liste des films qu'on a pas vu == OK
 * /users/:id/watchlist/:movie_id + post -> ajouter un film a voir == OK
 * /users/:id/watchlist/:movie_id + delete -> supprimer un film a voir == OK
+* /users/:id + PUT -> Mettre à jour un utilisateur == OK
 ---
 
 # movies

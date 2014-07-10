@@ -1,50 +1,39 @@
 <?php
 
+// Class concernant une vidéo
 class MovieHandler {
-	// Affichage d'un utilisateur par son ID
-    function get($id) {
-        $movie = get_movie_by_id($id);
+	
+    // Fiche d'une vidéo [idMovie]
+    function get($idMovie) {
+        $movie = get_movie_by_id($idMovie);
 
-        $json = '{
-		    "data":
-		        '.json_encode( $movie ).'
-		}' ;
-		echo $json;
-		return $json;
+        JSON::header(200);
+        JSON::result( $movie );
     }
 
-    // Création d'un utilisateur par son ID
-    function post($id) {
-        post_create_movie_by_id($id, trim($_POST['title']), trim($_POST['cover']), trim($_POST['genre']) );
-        $movies = get_movie_by_id($id);
+    // Création d'une vidéo
+    function post() {
+        $movie = post_create_movie_by_id('', trim($_POST['title']), trim($_POST['cover']), trim($_POST['genre']) );
 
-        $json = '{
-		    "data":
-		        '.json_encode( $movies ).'
-		}' ;
-		echo $json;
-		return $json;
+        JSON::header(200);
+        JSON::result( $movie );
     }
 
-    // Modification d'un utilisateur par son ID
-    function put($id) {
-    	$movies = get_movie_by_id($id);
-    	$title = $_SERVER['title'];
+    // Mise à jour d'une vidéo [idMovie]
+    function put($idMovie) {
+        $movieTitle = $_REQUEST['title'];
+        $movieCover = $_REQUEST['cover'];
+        $movieGenre = $_REQUEST['genre'];
+        put_update_movie_by_id($idMovie, $movieTitle, $movieCover, $movieGenre);
 
-        put_update_movie_by_id($id, $title);
+        $movie = get_movie_by_id($idMovie);
 
-        $json = '{
-		    "data":
-		        '.json_encode( $movies ).'
-		}' ;
-		echo $json;
-		return $json;
+        JSON::header(200);
+        JSON::result( $movie );
     }
 
-    // Suppression d'un utilisateur par son ID
-    function delete($id) {
-    	$movies = get_movie_by_id($id);
-
-        delete_movie_by_id($id);
+    // Suppression d'une vidéo [idMovie]
+    function delete($idMovie) {
+        delete_movie_by_id($idMovie);
     }
 }

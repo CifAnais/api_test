@@ -1,14 +1,13 @@
 <?php
 
+// Class concernant tous les utilisateurs
 class UsersHandler {
+
+	// Liste des utilisateurs
     function get() {
         $users = get_users();
 
-        $json = '{
-		    "data":
-		        '.json_encode( $users ).'
-		}' ;
-		echo $json;
-		return $json;
+        JSON::header(200);
+        JSON::result( $users );
     }
 }
